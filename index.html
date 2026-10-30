@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEC Portal · 3D Login</title>
+
+  <style>
+    :root {
+      --ink: #f5f7ff;
+      --muted: #9da6bf;
+      --line: rgba(255,255,255,.12);
+      --violet: #8b5cf6;
+      --cyan: #67e8f9;
+      --success: #64e6a8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Inter, system-ui, sans-serif;
+      background: #080b17;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      z-index: -2;
+      width: 42vw;
+      height: 42vw;
+      border-radius: 50%;
+      filter: blur(12px);
+      opacity: .46;
+    }
+
+    body::before {
+      left: -19vw;
+      top: -16vw;
+      background: #5225b8;
+    }
+
+    body::after {
+      right: -19vw;
+      bottom: -18vw;
+      background: #075ba1;
+    }
+
+    .shell {
+      position: relative;
+      isolation: isolate;
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 24px;
+      width: min(1220px, calc(100% - 40px));
+      min-height: 720px;
+      margin: 20px auto;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 34px;
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,.105),
+        rgba(255,255,255,.028)
+      );
+      box-shadow:
+        0 36px 90px rgba(0,0,0,.46),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      overflow: hidden;
+    }
+
+    .showcase {
+      position: relative;
+      min-height: 696px;
+      padding: 34px 38px;
+      border-radius: 25px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 52% 35%, rgba(80,184,255,.19), transparent 27%),
+        radial-gradient(circle at 12% 90%, rgba(140,92,246,.26), transparent 33%),
+        linear-gradient(145deg, #111936, #0b1026 58%, #080c1c);
+    }
+
+    .showcase::after {
+      content: "";
+      position: absolute;
+      inset: auto -15% -28% 15%;
+      height: 48%;
+      background: linear-gradient(
+        145deg,
+        rgba(74,142,255,.22),
+        transparent 60%
+      );
+      transform: rotate(-7deg);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      color: #10152b;
+      font-weight: 900;
+      background: linear-gradient(145deg, #fbe69a, #e9a43e);
+      box-shadow: 0 8px 22px rgba(245,171,52,.22);
+    }
+
+    .brand-copy {
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand-copy strong {
+      font-size: 13px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .brand-copy span {
+      color: #aab4cf;
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .intro {
+      position: relative;
+      z-index: 3;
+      max-width: 540px;
+      margin-top: 55px;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 5vw, 68px);
+      line-height: .98;
+      letter-spacing: -.07em;
+    }
+
+    h1 span {
+      color: #8edcff;
+      text-shadow: 0 0 36px rgba(83,201,255,.34);
+    }
+
+    .intro-copy {
+      max-width: 430px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .stats {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      gap: 28px;
+      margin-top: 30px;
+    }
+
+    .stat {
+      display: grid;
+      gap: 3px;
+    }
+
+    .stat strong {
+      font-size: 20px;
+    }
+
+    .stat span {
+      color: #8d97b2;
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      perspective: 900px;
+      pointer-events: none;
+    }
+
+    .antigravity-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      opacity: .62;
+      mix-blend-mode: screen;
+    }
+
+    .orb {
+      position: absolute;
+      top: 19%;
+      right: 15%;
+      width: 255px;
+      height: 255px;
+      border: 1px solid rgba(148,220,255,.32);
+      border-radius: 50%;
+      transform: rotateX(63deg) rotateZ(-18deg);
+      box-shadow:
+        0 0 46px rgba(47,177,255,.14),
+        inset 0 0 42px rgba(79,182,255,.08);
+      animation: drift 8s ease-in-out infinite;
+    }
+
+    .orb::before,
+    .orb::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(148,220,255,.2);
+      border-radius: 50%;
+    }
+
+    .orb::after {
+      inset: -25px;
+      border-color: rgba(139,92,246,.16);
+      transform: rotateY(70deg);
+    }
+
+    .orb-light {
+      position: absolute;
+      top: 31%;
+      right: 23%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 0 20px 8px rgba(103,232,249,.7);
+      animation: blink 3s ease-in-out infinite;
+    }
+
+    .campus {
+      position: absolute;
+      right: 13%;
+      bottom: 14%;
+      width: 330px;
+      height: 260px;
+      transform: rotateX(60deg) rotateZ(-38deg);
+      transform-style: preserve-3d;
+      animation: campusFloat 9s ease-in-out infinite;
+    }
+
+    .ground {
+      position: absolute;
+      inset: 30% 2% 6%;
+      border: 1px solid rgba(126,216,255,.18);
+      background: linear-gradient(
+        135deg,
+        rgba(53,161,255,.16),
+        rgba(139,92,246,.11)
+      );
+      transform: translateZ(-20px);
+    }
+
+    .tower {
+      position: absolute;
+      bottom: 14%;
+      left: 35%;
+      width: 62px;
+      height: 164px;
+      background: linear-gradient(
+        90deg,
+        #243b78,
+        #85d4f4 45%,
+        #263d80
+      );
+      box-shadow:
+        16px 20px 0 #111b3d,
+        0 0 24px rgba(103,232,249,.2);
+    }
+
+    .tower::before {
+      content: "";
+      position: absolute;
+      top: -24px;
+      left: 0;
+      width: 62px;
+      height: 24px;
+      background: linear-gradient(135deg, #9be6ff, #345a9f);
+      transform: skewX(-35deg);
+      transform-origin: left bottom;
+    }
+
+    .tower::after {
+      content: "";
+      position: absolute;
+      inset: 13px 12px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(180,245,255,.82) 0 4px,
+          transparent 4px 18px
+        ),
+        repeating-linear-gradient(
+          to right,
+          transparent 0 8px,
+          rgba(9,25,60,.5) 8px 12px
+        );
+      opacity: .65;
+    }
+
+    .wing {
+      position: absolute;
+      bottom: 14%;
+      width: 120px;
+      height: 82px;
+      background: linear-gradient(150deg, #365899, #16305f);
+      box-shadow: 12px 12px 0 #111b3d;
+    }
+
+    .left-wing {
+      left: 0;
+    }
+
+    .right-wing {
+      right: 1%;
+      width: 105px;
+    }
+
+    .window-strip {
+      position: absolute;
+      inset: 16px 12px;
+      background: repeating-linear-gradient(
+        to right,
+        rgba(132,231,255,.9) 0 7px,
+        transparent 7px 17px
+      );
+      opacity: .5;
+    }
+
+    .float-card {
+      position: absolute;
+      right: 8%;
+      top: 57%;
+      z-index: 2;
+      padding: 12px 15px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px;
+      color: #c7eaff;
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      background: rgba(10,18,44,.72);
+      transform: rotate(-7deg);
+      backdrop-filter: blur(12px);
+      animation: cardFloat 7s ease-in-out infinite;
+    }
+
+    .float-card::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 12px var(--success);
+    }
+
+    .login-side {
+      display: grid;
+      place-items: center;
+      padding: 36px 42px;
+      border-radius: 25px;
+      background: rgba(7,11,28,.55);
+    }
+
+    .login-card {
+      width: min(100%, 390px);
+    }
+
+    .card-kicker {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      color: #9aa8ca;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .secure {
+      color: var(--success);
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: -.06em;
+    }
+
+    .sub {
+      margin: 10px 0 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .user-type {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      padding: 4px;
+      margin-bottom: 24px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .user-type button {
+      min-height: 38px;
+      border: 0;
+      border-radius: 10px;
+      color: #929dbb;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .user-type button.active {
+      color: white;
+      background: linear-gradient(135deg, #4c78ff, #8b5cf6);
+    }
+
+    .field {
+      position: relative;
+      margin-top: 17px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #dce3f5;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field input {
+      width: 100%;
+      height: 48px;
+      padding: 0 14px 0 42px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      color: white;
+      font: inherit;
+      background: rgba(255,255,255,.055);
+    }
+
+    .field input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 4px rgba(103,232,249,.09);
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      bottom: 15px;
+      color: #8b9bc3;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      bottom: 9px;
+      width: 32px;
+      height: 30px;
+      border: 0;
+      color: #aebbd8;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      margin: 16px 0 22px;
+      color: #8994b0;
+      font-size: 12px;
+    }
+
+    .remember {
+      display: flex;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    a {
+      color: #86d9ff;
+      text-decoration: none;
+    }
+
+    .login-btn,
+    .google-btn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 12px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .login-btn {
+      border: 1px solid rgba(255,255,255,.18);
+      color: white;
+      background: linear-gradient(135deg, #517bff, #9b5bff);
+      box-shadow: 0 14px 24px rgba(88,86,255,.28);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0 18px;
+      color: #68738f;
+      font-size: 10px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: var(--line);
+    }
+
+    .google-btn {
+      border: 1px solid var(--line);
+      color: #e7ecfa;
+      background: rgba(255,255,255,.045);
+    }
+
+    .google-g {
+      display: inline-grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      border-radius: 50%;
+      color: #4285f4;
+      background: white;
+    }
+
+    .register {
+      margin-top: 22px;
+      color: #7885a2;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    #message {
+      min-height: 20px;
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      color: #586580;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    @keyframes drift {
+      0%, 100% {
+        transform: rotateX(63deg) rotateZ(-18deg) translate3d(0,0,0);
+      }
+
+      50% {
+        transform: rotateX(63deg) rotateZ(-18deg) translate3d(10px,-13px,0);
+      }
+    }
+
+    @keyframes campusFloat {
+      0%, 100% {
+        transform: rotateX(60deg) rotateZ(-38deg) translateY(0);
+      }
+
+      50% {
+        transform: rotateX(60deg) rotateZ(-38deg) translateY(-10px);
+      }
+    }
+
+    @keyframes cardFloat {
+      0%, 100% {
+        transform: rotate(-7deg) translateY(0);
+      }
+
+      50% {
+        transform: rotate(-4deg) translateY(-8px);
+      }
+    }
+
+    @keyframes blink {
+      0%, 100% {
+        opacity: .45;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .shell {
+        grid-template-columns: 1fr;
+        width: min(720px, calc(100% - 24px));
+      }
+
+      .showcase {
+        min-height: 580px;
+      }
+
+      .login-side {
+        min-height: 630px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .shell {
+        margin: 12px auto;
+        padding: 7px;
+      }
+
+      .showcase {
+        min-height: 520px;
+        padding: 25px 22px;
+      }
+
+      h1 {
+        font-size: 43px;
+      }
+
+      .orb {
+        right: -10%;
+        top: 24%;
+        width: 220px;
+        height: 220px;
+      }
+
+      .campus {
+        right: -16%;
+        bottom: 11%;
+        transform: scale(.76) rotateX(60deg) rotateZ(-38deg);
+      }
+
+      .login-side {
+        padding: 35px 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <section class="showcase">
+      <div class="brand">
+        <div class="brand-mark">AP</div>
+
+        <div class="brand-copy">
+          <strong>Adhiparasakthi</strong>
+          <span>Engineering College</span>
+        </div>
+      </div>
+
+      <div class="intro">
+        <p class="eyebrow">The future is already here</p>
+
+        <h1>
+          Learn.
+          <span>Build.</span>
+          <br>
+          Lead.
+        </h1>
+
+        <p class="intro-copy">
+          One connected space for the people shaping tomorrow —
+          from your first lecture to your next breakthrough.
+        </p>
+
+        <div class="stats">
+          <div class="stat">
+            <strong>35+</strong>
+            <span>Years of impact</span>
+          </div>
+
+          <div class="stat">
+            <strong>8k+</strong>
+            <span>Alumni worldwide</span>
+          </div>
+
+          <div class="stat">
+            <strong>24/7</strong>
+            <span>Digital access</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene">
+        <canvas
+          class="antigravity-canvas"
+          id="antigravity-canvas"
+        ></canvas>
+
+        <div class="orb"></div>
+        <div class="orb-light"></div>
+
+        <div class="campus">
+          <div class="ground"></div>
+
+          <div class="wing left-wing">
+            <div class="window-strip"></div>
+          </div>
+
+          <div class="tower"></div>
+
+          <div class="wing right-wing">
+            <div class="window-strip"></div>
+          </div>
+        </div>
+
+        <div class="float-card">Portal online</div>
+      </div>
+    </section>
+
+    <section class="login-side">
+      <div class="login-card">
+        <div class="card-kicker">
+          <span>Campus access</span>
+          <span class="secure">Secure login</span>
+        </div>
+
+        <h2>Welcome back.</h2>
+
+        <p class="sub">
+          Sign in to continue to your college portal.
+        </p>
+
+        <div class="user-type">
+          <button
+            class="active"
+            type="button"
+            onclick="selectUser('Student', this)"
+          >
+            Student
+          </button>
+
+          <button
+            type="button"
+            onclick="selectUser('Faculty', this)"
+          >
+            Faculty
+          </button>
+
+          <button
+            type="button"
+            onclick="selectUser('Admin', this)"
+          >
+            Admin
+          </button>
+        </div>
+
+        <form onsubmit="login(event)">
+          <div class="field">
+            <label id="userLabel" for="username">
+              Register Number
+            </label>
+
+            <span class="field-icon">◈</span>
+
+            <input
+              id="username"
+              type="text"
+              placeholder="Enter Register Number"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+
+            <span class="field-icon">◉</span>
+
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter Password"
+              required
+            >
+
+            <button
+              class="toggle-password"
+              type="button"
+              onclick="togglePassword(this)"
+            >
+              ◌
+            </button>
+          </div>
+
+          <div class="options">
+            <label class="remember">
+              <input type="checkbox">
+              <span>Remember me</span>
+            </label>
+
+            <a href="#" onclick="forgotPassword(event)">
+              Forgot password?
+            </a>
+          </div>
+
+          <button class="login-btn" type="submit">
+            ENTER PORTAL →
+          </button>
+        </form>
+
+        <div class="divider">
+          <span>OR CONTINUE WITH</span>
+        </div>
+
+        <button
+          class="google-btn"
+          type="button"
+          onclick="googleLogin()"
+        >
+          <span class="google-g">G</span>
+          Google Workspace
+        </button>
+
+        <p class="register">
+          New to the portal?
+
+          <a href="#" onclick="registerUser(event)">
+            Create account
+          </a>
+        </p>
+
+        <p id="message"></p>
+
+        <p class="footer-note">
+          By continuing, you agree to the college portal terms<br>
+          and acknowledge the privacy notice.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let selectedUser = "Student";
+
+    class Antigravity {
+      constructor(canvas, options = {}) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d");
+
+        this.colors = options.colors || [
+          "#5227FF",
+          "#FF9FFC",
+          "#B497CF"
+        ];
+
+        this.count = options.count || 1500;
+        this.magnetRadius = options.magnetRadius || 9;
+        this.ringRadius = options.ringRadius || 7;
+        this.particleSize = options.particleSize || 0.9;
+        this.autoAnimate = options.autoAnimate !== false;
+
+        this.particles = [];
+        this.width = 0;
+        this.height = 0;
+        this.time = 0;
+        this.pointer = {
+          x: 0,
+          y: 0,
+          active: false
+        };
+
+        this.resize = this.resize.bind(this);
+        this.animate = this.animate.bind(this);
+
+        this.resize();
+        this.createParticles();
+
+        window.addEventListener("resize", this.resize);
+
+        const showcase = this.canvas.closest(".showcase");
+
+        showcase.addEventListener("pointermove", (event) => {
+          const bounds = this.canvas.getBoundingClientRect();
+
+          this.pointer.x =
+            event.clientX - bounds.left - this.width / 2;
+
+          this.pointer.y =
+            event.clientY - bounds.top - this.height / 2;
+
+          this.pointer.active = true;
+        });
+
+        showcase.addEventListener("pointerleave", () => {
+          this.pointer.active = false;
+        });
+
+        requestAnimationFrame(this.animate);
+      }
+
+      resize() {
+        const bounds = this.canvas.getBoundingClientRect();
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+
+        this.width = Math.max(bounds.width, 1);
+        this.height = Math.max(bounds.height, 1);
+
+        this.canvas.width = this.width * ratio;
+        this.canvas.height = this.height * ratio;
+
+        this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
+
+      createParticles() {
+        this.particles = Array.from(
+          { length: this.count },
+          (_, index) => ({
+            angle: Math.random() * Math.PI * 2,
+            radius: 30 + Math.random() * 330,
+            depth: Math.random() * 2 - 1,
+            speed: .00018 + Math.random() * .00055,
+            wobble: Math.random() * Math.PI * 2,
+            size: this.particleSize * (
+              .45 + Math.random() * 1.25
+            ),
+            color: this.colors[index % this.colors.length]
+          })
+        );
+      }
+
+      animate(now) {
+        const delta = Math.min(
+          now - (this.lastTime || now),
+          40
+        );
+
+        this.lastTime = now;
+        this.time += delta;
+
+        const ctx = this.ctx;
+        const centerX = this.width / 2;
+        const centerY = this.height / 2;
+
+        ctx.clearRect(0, 0, this.width, this.height);
+
+        this.particles.forEach((particle) => {
+          if (this.autoAnimate) {
+            particle.angle += particle.speed * delta;
+          }
+
+          const wave =
+            Math.sin(
+              this.time * .001 + particle.wobble
+            ) * 8;
+
+          const ring =
+            this.ringRadius * 18 +
+            particle.radius +
+            wave;
+
+          let x = Math.cos(particle.angle) * ring;
+          let y = Math.sin(particle.angle) * ring * .58;
+
+          if (this.pointer.active) {
+            const dx = this.pointer.x - x;
+            const dy = this.pointer.y - y;
+            const distance = Math.hypot(dx, dy);
+
+            const influence = Math.max(
+              0,
+              1 - distance / (this.magnetRadius * 28)
+            );
+
+            x += dx * influence * .18;
+            y += dy * influence * .18;
+          }
+
+          const perspective =
+            1 + particle.depth * .28;
+
+          const px = centerX + x * perspective;
+          const py = centerY + y * perspective;
+
+          const size = Math.max(
+            .35,
+            particle.size * (1.2 - particle.depth * .35)
+          );
+
+          ctx.globalAlpha =
+            .18 + (1 - particle.depth) * .24;
+
+          ctx.fillStyle = particle.color;
+          ctx.beginPath();
+          ctx.arc(px, py, size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(this.animate);
+      }
+    }
+
+    new Antigravity(
+      document.getElementById("antigravity-canvas"),
+      {
+        colors: [
+          "#5227FF",
+          "#FF9FFC",
+          "#B497CF"
+        ],
+        count: 1500,
+        magnetRadius: 9,
+        ringRadius: 7,
+        particleSize: 0.9,
+        autoAnimate: true
+      }
+    );
+
+    function selectUser(user, button) {
+      selectedUser = user;
+
+      document
+        .querySelectorAll(".user-type button")
+        .forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+      button.classList.add("active");
+
+      const label =
+        document.getElementById("userLabel");
+
+      const username =
+        document.getElementById("username");
+
+      const copy = {
+        Student: [
+          "Register Number",
+          "Enter Register Number"
+        ],
+        Faculty: [
+          "Faculty ID",
+          "Enter Faculty ID"
+        ],
+        Admin: [
+          "Admin ID",
+          "Enter Admin ID"
+        ]
+      }[user];
+
+      label.textContent = copy[0];
+      username.placeholder = copy[1];
+      username.focus();
+
+      document.getElementById("message").textContent = "";
+    }
+
+    function login(event) {
+      event.preventDefault();
+
+      const message =
+        document.getElementById("message");
+
+      message.style.color = "var(--success)";
+      message.textContent =
+        selectedUser +
+        " login successful · Welcome to APEC.";
+    }
+
+    function togglePassword(button) {
+      const password =
+        document.getElementById("password");
+
+      const visible =
+        password.type === "text";
+
+      password.type =
+        visible ? "password" : "text";
+
+      button.textContent =
+        visible ? "◌" : "◉";
+    }
+
+    function googleLogin() {
+      const message =
+        document.getElementById("message");
+
+      message.style.color = "#ffd166";
+      message.textContent =
+        "Google Workspace authentication is ready to connect.";
+    }
+
+    function registerUser(event) {
+      event.preventDefault();
+
+      const message =
+        document.getElementById("message");
+
+      message.style.color = "#86d9ff";
+      message.textContent =
+        "Registration will open in a new portal flow.";
+    }
+
+    function forgotPassword(event) {
+      event.preventDefault();
+
+      const message =
+        document.getElementById("message");
+
+      message.style.color = "#86d9ff";
+      message.textContent =
+        "Password reset instructions will be sent to your college email.";
+    }
+  </script>
+</body>
+</html>
